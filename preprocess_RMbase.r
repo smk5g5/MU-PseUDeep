@@ -1,1 +1,11 @@
+library(GenomicFeatures)
+library(ComplexHeatmap)
+library(GenomicRanges)
+library(BSgenome.Hsapiens.UCSC.hg19)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(EnsDb.Hsapiens.v86)
+library(GenomicFeatures)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(rtracklayer)
+hg19_2Ome_coords <- read.table("RMBase_hg19_all_Nm_site.txt",header = F,sep = "\t")
 
