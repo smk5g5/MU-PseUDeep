@@ -136,15 +136,6 @@ def MCNN(trainX1,trainX2,trainY1,valX1,valX2,valY1,testX1,testX2,testY):
     i = random.randint(1,100)
     NAME = "combined_secstr_seq_CNN_model_emboss-{}".format(int(time.time()))
     tensorboard = TensorBoard(log_dir="logs/{}".format(NAME))
-    onehot_secstr = conv.Conv1D(5, 10, kernel_initializer='glorot_normal',kernel_regularizer=l2({{uniform(0.0001, 0.1)}}), padding='valid', name='0_secstr')(input_1)
-    onehot_secstr = Dropout({{uniform(0, 1)}})(onehot_secstr)
-    onehot_secstr = keras.layers.advanced_activations.PReLU(alpha_initializer='zeros', alpha_regularizer=None,alpha_constraint=None, shared_axes=None)(onehot_secstr)
-    onehot_secstr = core.Flatten()(onehot_secstr)
-    onehot_secstr2 = conv.Conv1D(9, 4, kernel_initializer='glorot_normal',kernel_regularizer=l2({{uniform(0.0001, 0.1)}}), padding='valid', name='1_secstr')(input_1)
-    onehot_secstr2 = Dropout({{uniform(0, 1)}})(onehot_secstr2)
-    onehot_secstr2 = keras.layers.advanced_activations.PReLU(alpha_initializer='zeros', alpha_regularizer=None,alpha_constraint=None, shared_axes=None)(onehot_secstr2)
-    onehot_secstr2 = core.Flatten()(onehot_secstr2)
-    output_onehot_sec = concatenate([onehot_secstr, onehot_secstr2], axis=-1)
     onehot_x = conv.Conv1D(5, 10, kernel_initializer='glorot_normal',kernel_regularizer=l2({{uniform(0.0001, 0.1)}}), padding='valid', name='0')(input_2)
     onehot_x = Dropout({{uniform(0, 1)}})(onehot_x)
     onehot_x = keras.layers.advanced_activations.PReLU(alpha_initializer='zeros', alpha_regularizer=None,alpha_constraint=None, shared_axes=None)(onehot_x)
@@ -154,8 +145,7 @@ def MCNN(trainX1,trainX2,trainY1,valX1,valX2,valY1,testX1,testX2,testY):
     onehot_x2 = keras.layers.advanced_activations.PReLU(alpha_initializer='zeros', alpha_regularizer=None,alpha_constraint=None, shared_axes=None)(onehot_x2)
     onehot_x2 = core.Flatten()(onehot_x2)
     output_onehot_seq = concatenate([onehot_x, onehot_x2], axis=-1)
-    final_output = concatenate([output_onehot_sec, output_onehot_seq])
-    dense_out = Dense({{choice([20,30,50,60,64,70,80,90,100, 128, 256, 512, 1024])}}, kernel_initializer='glorot_normal', activation='softplus', name='dense_concat')(final_output)
+    dense_out = Dense({{choice([20,30,50,60,64,70,80,90,100, 128, 256, 512, 1024])}}, kernel_initializer='glorot_normal', activation='softplus', name='dense_concat')(output_onehot_seq)
     out = Dense(2, activation="softmax", kernel_initializer='glorot_normal', name='6')(dense_out)
     ########## Set Net ##########
     cnn = Model(inputs=[input_1,input_2], outputs=out)
@@ -208,4 +198,4 @@ if __name__ == '__main__':
         print(eval_hyperopt_space(space, vals))  # <-- values
 ##from hyperas.utils import eval_hyperopt_space
 ##print(eval_hyperopt_space(space, vals))
-pickle.dump(hyperas_dict, open( "./hyperas_dict_30trials", "wb" ))        
+pickle.dump(hyperas_dict, open( "./hyperas_dict_30trials", "wb" ))
